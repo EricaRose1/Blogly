@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Post{% endblock %}
+
+{% block content %}
+
+<h1>Edit Post</h1>
+
+<form method="POST" action="/posts/{{ post.id }}/edit">
+
+  <div class="form-group row">
+    <label for="title">Title</label>
+    <div>
+      <input class="form-control" id="title" name="title" value="{{ post.title }}">
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="content">Post Content</label>
+    <div>
+      <textarea class="form-control"
+                id="content"
+                name="content">{{ post.content }}</textarea>
+    </div>
+  </div>
+
+  <div>
+    <div>
+      <a href="/users/{{ post.user_id }}">
+        Cancel
+      </a>
+      <button type="submit" class="btn btn-success">
+        Edit
+      </button>
+    </div>
+  </div>
+
+</form>
+
+{% endblock %}
