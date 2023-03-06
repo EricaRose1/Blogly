@@ -24,12 +24,14 @@ class User(db.Model):
     image_url = db.Column(db.String(200), 
                         nullable=True)
     
-    posts = db.relatioinship("Post", backref='user', cascade='all, delete-orphan')
+    posts = db.relationship("Post", backref='user', cascade='all, delete-orphan')
+
     @property
     def full_name(self):
         '''Return full name of user.'''
 
         return f"{self.first_name} {self.last_name}"
+
 
 class Post(db.Model):
     ''' Blog post '''
@@ -47,21 +49,54 @@ class Post(db.Model):
 
     created_at = db.Column(db.DateTime,
                             nullable=False,
-                            defalut= datetime.datetime.now)
+                            default= datetime.datetime.now)
     
     user_id = db.Column(db.Integer,
                         db.ForeignKey('users.id'),
                         nullable= False)
+
     @property
     def nice_date(self):
         '''return formatted date looks nice'''
         return self.created_at.strftime('%a %b %-d %Y, %-I:%M %p')
 
+
+class Tag(db.Model):
+    '''tag model'''
+
+    __tablename__='tags'
+
+    id = db.Column(db.Integer, 
+                    primary_key=True)
+    name = db.Column(db.Text,
+                    nullable=False,
+                    unique=True)
+
+    posts = db.relationship('Post',
+                            secondary='posttags',
+                            backref='tags')
+
+
+class PostTag(db.Model):
+    '''post_id and tag'''
+    
+    __tablename__= 'posttags'
+
+    post_id = db.Column(db.Integer,
+                        db.ForeignKey('posts.id'),
+                        unique=True,
+                        nullable=False,
+                        primary_key=True)
+
+    tag_id = db.Column(db.Text,
+                        db.ForeignKey('tags.id'),
+                        unique=True,
+                        nullable=False,
+                        primary_key=True)
         
+
 def connect_db(app):
     ''' called in app.py, helps connect to database'''
     
     db.app = app
     db.init_app(app)
-
-
